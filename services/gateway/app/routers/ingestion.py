@@ -8,7 +8,7 @@ from typing import Optional
 from fastapi import APIRouter, Query
 from pydantic import BaseModel
 
-from services.gateway.app.services import ingestion_client
+from app.services import ingestion_client
 
 router = APIRouter(prefix="/api/ingestion", tags=["ingestion"])
 
@@ -35,7 +35,7 @@ async def ingestion_health():
             "detail": {"connected": db_ok},
         },
         {
-            "subsystem": "alpaca_connection",
+            "subsystem": "finnhub_connection",
             "status": "healthy" if health.get("status") != "unreachable" else "unhealthy",
             "detail": {"last_check": health.get("ts")},
         },

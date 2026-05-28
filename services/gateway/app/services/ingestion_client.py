@@ -8,7 +8,7 @@ from typing import Any, Dict, Optional
 import httpx
 from fastapi import HTTPException
 
-from services.gateway.app.config import settings
+from app.config import settings
 
 log = logging.getLogger(__name__)
 

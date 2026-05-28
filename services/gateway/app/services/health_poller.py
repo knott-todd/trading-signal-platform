@@ -6,8 +6,8 @@ import asyncio
 import logging
 from typing import Optional
 
-from services.gateway.app.services import ingestion_client
-from services.gateway.app.services.event_bus import bus
+from app.services import ingestion_client
+from app.services.event_bus import bus
 
 log = logging.getLogger(__name__)
 

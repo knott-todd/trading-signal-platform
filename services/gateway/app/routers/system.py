@@ -6,9 +6,9 @@ from fastapi import APIRouter, Request
 from fastapi.responses import StreamingResponse
 from sse_starlette.sse import EventSourceResponse
 
-from services.gateway.app.services import ingestion_client
-from services.gateway.app.services.event_bus import bus
-from services.gateway.app.config import settings
+from app.services import ingestion_client
+from app.services.event_bus import bus
+from app.config import settings
 
 log = logging.getLogger(__name__)
 

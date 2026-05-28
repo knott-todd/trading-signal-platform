@@ -5,9 +5,9 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from services.gateway.app.routers.system import router as system_router
-from services.gateway.app.routers.ingestion import router as ingestion_router
-from services.gateway.app.services.health_poller import poll_loop
+from app.routers.system import router as system_router
+from app.routers.ingestion import router as ingestion_router
+from app.services.health_poller import poll_loop
 
 logging.basicConfig(
     level=logging.INFO,
