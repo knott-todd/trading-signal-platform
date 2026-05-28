@@ -1,7 +1,7 @@
 """
 Abstract base class for all market data connectors.
 Every connector must implement all five methods.
-The ingestion service never calls Alpaca or yfinance directly.
+The ingestion service never calls Finnhub or yfinance directly.
 """
 from abc import ABC, abstractmethod
 from datetime import date, datetime

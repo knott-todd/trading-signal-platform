@@ -3,7 +3,7 @@ Unit tests for the validation layer. No DB required.
 """
 import pytest
 from datetime import datetime, timezone
-from services.backend.app.services.validation import validate_bar, validate_batch
+from app.services.validation import validate_bar, validate_batch
 
 
 def _make_bar(o=100.0, h=105.0, l=98.0, c=102.0, v=10000, ts=None):

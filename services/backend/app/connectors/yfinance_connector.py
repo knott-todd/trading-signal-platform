@@ -9,7 +9,7 @@ from typing import Callable, List
 import pandas as pd
 import yfinance as yf
 
-from services.backend.app.connectors.base import ConnectorInterface
+from app.connectors.base import ConnectorInterface
 
 log = logging.getLogger(__name__)
 

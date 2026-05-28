@@ -5,8 +5,8 @@ Run once on startup via app lifespan.
 import logging
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncConnection
-from services.backend.app.db.session import engine, Base
-from services.backend.app.db import models  # noqa: F401 — ensures models are registered on Base
+from app.db.session import engine, Base
+from app.db import models  # noqa: F401 — ensures models are registered on Base
 
 log = logging.getLogger(__name__)
 

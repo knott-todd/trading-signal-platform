@@ -5,8 +5,8 @@
 from fastapi import APIRouter
 from sqlalchemy import text
 
-from services.backend.app.db.session import engine
-from services.backend.app.stream.manager import stream_manager, StreamState
+from app.db.session import engine
+from app.stream.manager import stream_manager, StreamState
 
 health_router = APIRouter(tags=["ops"])
 scheduler_router = APIRouter(prefix="/scheduler", tags=["ops"])

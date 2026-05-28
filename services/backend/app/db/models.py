@@ -3,7 +3,7 @@ from sqlalchemy import (
     Numeric, DateTime, ForeignKey, Index, UniqueConstraint
 )
 from sqlalchemy.sql import func
-from services.backend.app.db.session import Base
+from app.db.session import Base
 
 
 class Ticker(Base):

@@ -7,13 +7,15 @@ from datetime import date, datetime, timedelta, timezone
 from typing import List, Optional
 
 import pandas_market_calendars as mcal
+from apscheduler.schedulers.asyncio import AsyncIOScheduler
+from apscheduler.triggers.cron import CronTrigger
 
-from services.backend.app.config import settings
-from services.backend.app.connectors.alpaca import AlpacaConnector
-from services.backend.app.connectors.yfinance_connector import YFinanceConnector
-from services.backend.app.db.init_db import RETENTION_DAYS
-from services.backend.app.db.session import AsyncSessionLocal
-from services.backend.app.services.ingestion import ingest_bars
+from app.config import settings
+from app.connectors.finnhub_connector import FinnhubConnector
+from app.connectors.yfinance_connector import YFinanceConnector
+from app.db.init_db import RETENTION_DAYS
+from app.db.session import AsyncSessionLocal
+from app.services.ingestion import ingest_bars
 
 log = logging.getLogger(__name__)
 
@@ -39,8 +41,8 @@ async def _get_active_symbols(stream_only: bool = False) -> List[str]:
 
 
 async def run_eod_pull() -> None:
-    """Pull today's official daily bar for all active tickers via Alpaca."""
-    connector = AlpacaConnector()
+    """Pull today's official daily bar for all active tickers via Finnhub."""
+    connector = FinnhubConnector()
     symbols = await _get_active_symbols()
     today = date.today()
 
@@ -53,7 +55,7 @@ async def run_eod_pull() -> None:
             bars = df.to_dict("records")
             async with AsyncSessionLocal() as db:
                 written = await ingest_bars(
-                    db, bars, symbol, "1d", "alpaca_fetch", "fetch", "eod"
+                    db, bars, symbol, "1d", "finnhub_fetch", "fetch", "eod"
                 )
             log.info("EOD pull: %s — %d bars written.", symbol, written)
         except Exception as exc:
@@ -72,7 +74,7 @@ async def run_eod_pull() -> None:
 
 async def run_monday_gap_pull() -> None:
     """Pull Friday's close bars before stream opens on Mondays."""
-    connector = AlpacaConnector()
+    connector = FinnhubConnector()
     symbols = await _get_active_symbols(stream_only=True)
     today = date.today()
     friday = today - timedelta(days=3)  # Monday - 3 = Friday
@@ -84,7 +86,7 @@ async def run_monday_gap_pull() -> None:
                 continue
             bars = df.to_dict("records")
             async with AsyncSessionLocal() as db:
-                await ingest_bars(db, bars, symbol, "1d", "alpaca_fetch", "fetch", "eod")
+                await ingest_bars(db, bars, symbol, "1d", "finnhub_fetch", "fetch", "eod")
             log.info("Monday gap pull: %s Friday bar written.", symbol)
         except Exception as exc:
             log.error("Monday gap pull error %s: %s", symbol, exc)
@@ -165,7 +167,7 @@ async def run_backfill(
     Manual or automatic backfill for a given symbol/resolution/range.
     Returns total rows written.
     """
-    connector = AlpacaConnector()
+    connector = FinnhubConnector()
     total_written = 0
 
     try:
@@ -188,7 +190,7 @@ async def run_backfill(
                 df = yf.get_intraday_bars(symbol, resolution, start_dt, end_dt)
             source = "yfinance"
         else:
-            source = "alpaca_fetch"
+            source = "finnhub_fetch"
 
         if not df.empty:
             bars = df.to_dict("records")
@@ -224,3 +226,67 @@ async def run_initial_backfill(symbol: str) -> None:
         await asyncio.sleep(1)  # rate limit courtesy
 
     log.info("Initial backfill complete for %s.", symbol)
+
+
+def is_trading_day(check_date: Optional[date] = None) -> bool:
+    """Return True if check_date (default: today) is a NYSE trading day."""
+    d = check_date or date.today()
+    schedule = NYSE.schedule(start_date=d.isoformat(), end_date=d.isoformat())
+    return not schedule.empty
+
+
+def get_scheduler() -> AsyncIOScheduler:
+    """Build and return a configured AsyncIOScheduler with all production jobs."""
+    scheduler = AsyncIOScheduler(timezone="America/New_York")
+
+    # Wrap each market-dependent job so it skips NYSE holidays.
+    # Retention cleanup is calendar-agnostic and runs unconditionally.
+    async def _eod_pull():
+        if is_trading_day():
+            await run_eod_pull()
+
+    async def _monday_gap_pull():
+        if is_trading_day():
+            await run_monday_gap_pull()
+
+    async def _gap_audit():
+        if is_trading_day():
+            await run_gap_audit()
+
+    # Spec: EOD daily bar pull — weekdays 16:30 ET
+    scheduler.add_job(
+        _eod_pull,
+        CronTrigger(day_of_week="mon-fri", hour=16, minute=30),
+        id="eod_pull",
+        name="EOD daily bar pull",
+        replace_existing=True,
+    )
+
+    # Spec: Monday gap pull — Mondays 08:00 ET
+    scheduler.add_job(
+        _monday_gap_pull,
+        CronTrigger(day_of_week="mon", hour=8, minute=0),
+        id="monday_gap_pull",
+        name="Monday Friday-gap fill",
+        replace_existing=True,
+    )
+
+    # Spec: Gap audit — daily 17:00 ET
+    scheduler.add_job(
+        _gap_audit,
+        CronTrigger(hour=17, minute=0),
+        id="gap_audit",
+        name="Daily gap audit",
+        replace_existing=True,
+    )
+
+    # Spec: Retention cleanup — daily 02:00 ET
+    scheduler.add_job(
+        run_retention_cleanup,
+        CronTrigger(hour=2, minute=0),
+        id="retention_cleanup",
+        name="Bar retention cleanup",
+        replace_existing=True,
+    )
+
+    return scheduler

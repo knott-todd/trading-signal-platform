@@ -3,7 +3,7 @@ from typing import List
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 
-from services.backend.app.stream.manager import stream_manager
+from app.stream.manager import stream_manager
 
 router = APIRouter(prefix="/stream", tags=["stream"])
 

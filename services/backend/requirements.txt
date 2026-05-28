@@ -4,7 +4,8 @@ sqlalchemy[asyncio]==2.0.30
 asyncpg==0.29.0
 alembic==1.13.1
 apscheduler==3.10.4
-alpaca-py==0.21.1
+finnhub-python==2.4.20
+websocket-client==1.7.0
 yfinance==0.2.40
 pandas==2.2.2
 numpy==1.26.4

@@ -4,8 +4,7 @@ from typing import List
 
 
 class Settings(BaseSettings):
-    alpaca_api_key: str
-    alpaca_secret_key: str
+    finnhub_api_key: str
     database_url: str
 
     stream_resolutions: str = "1m,5m"

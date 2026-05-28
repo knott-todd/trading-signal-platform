@@ -8,14 +8,14 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 
-from services.backend.app.db.init_db import init_db
-from services.backend.app.scheduler.jobs import get_scheduler, is_trading_day
-from services.backend.app.api.routers.tickers import router as tickers_router
-from services.backend.app.api.routers.bars import router as bars_router
-from services.backend.app.api.routers.ingest import router as ingest_router
-from services.backend.app.api.routers.stream import router as stream_router
-from services.backend.app.api.routers.health import health_router, scheduler_router, set_scheduler
-from services.backend.app.stream.manager import stream_manager
+from app.db.init_db import init_db
+from app.scheduler.jobs import get_scheduler, is_trading_day
+from app.api.routers.tickers import router as tickers_router
+from app.api.routers.bars import router as bars_router
+from app.api.routers.ingest import router as ingest_router
+from app.api.routers.stream import router as stream_router
+from app.api.routers.health import health_router, scheduler_router, set_scheduler
+from app.stream.manager import stream_manager
 
 logging.basicConfig(
     level=logging.INFO,

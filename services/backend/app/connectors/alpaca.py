@@ -14,8 +14,8 @@ from alpaca.data.live import StockDataStream
 from alpaca.data.requests import StockBarsRequest
 from alpaca.data.timeframe import TimeFrame, TimeFrameUnit
 
-from services.backend.app.config import settings
-from services.backend.app.connectors.base import ConnectorInterface
+from app.config import settings
+from app.connectors.base import ConnectorInterface
 
 log = logging.getLogger(__name__)
 

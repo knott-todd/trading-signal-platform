@@ -6,9 +6,9 @@ from pydantic import BaseModel
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from services.backend.app.config import settings
-from services.backend.app.db.session import get_db
-from services.backend.app.db.models import Ticker
+from app.config import settings
+from app.db.session import get_db
+from app.db.models import Ticker
 
 router = APIRouter(prefix="/tickers", tags=["watchlist"])
 

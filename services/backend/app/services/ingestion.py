@@ -9,8 +9,8 @@ from typing import Dict, List, Optional
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from services.backend.app.db.models import Bar, IngestionLog
-from services.backend.app.services.validation import validate_batch, validate_bar
+from app.db.models import Bar, IngestionLog
+from app.services.validation import validate_batch, validate_bar
 
 log = logging.getLogger(__name__)
 

@@ -1,12 +1,12 @@
 import { clsx } from 'clsx'
 import {
   Activity, LayoutGrid, CandlestickChart, Radio,
-  ChevronDown, ChevronRight,
+  ChevronDown, ChevronRight, type LucideIcon,
 } from 'lucide-react'
 import { useAppStore } from '@/store/app'
 import { MODULE_REGISTRY } from '@/lib/moduleRegistry'
 
-const ICONS: Record<string, React.ComponentType<{ size?: number; className?: string }>> = {
+const ICONS: Record<string, LucideIcon> = {
   Activity,
   LayoutGrid,
   CandlestickChart,
