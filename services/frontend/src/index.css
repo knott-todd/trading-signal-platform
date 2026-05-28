@@ -1,0 +1,134 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    box-sizing: border-box;
+  }
+
+  html, body, #root {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    background-color: #0a0b0d;
+    color: #c8d0dc;
+    font-family: 'JetBrains Mono', 'Fira Code', monospace;
+    font-size: 13px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    overflow: hidden;
+  }
+
+  ::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #0f1114;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #2a3340;
+    border-radius: 2px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #4a5568;
+  }
+
+  ::selection {
+    background: rgba(61, 142, 240, 0.3);
+  }
+}
+
+@layer components {
+  .status-dot {
+    @apply w-2 h-2 rounded-full flex-shrink-0;
+  }
+
+  .status-dot-green  { @apply bg-green shadow-[0_0_6px_#00d084]; }
+  .status-dot-amber  { @apply bg-amber shadow-[0_0_6px_#f5a623]; }
+  .status-dot-red    { @apply bg-red shadow-[0_0_6px_#e63946]; }
+  .status-dot-grey   { @apply bg-dim; }
+  .status-dot-pulse  { animation: statusPulse 2s ease-in-out infinite; }
+
+  .card {
+    @apply bg-surface border border-border rounded-sm p-4;
+  }
+
+  .label-xs {
+    @apply text-[10px] font-mono uppercase tracking-widest text-dim;
+  }
+
+  .value-lg {
+    @apply text-2xl font-mono font-semibold text-bright;
+  }
+
+  .tag {
+    @apply inline-flex items-center px-1.5 py-0.5 rounded-sm text-[10px] font-mono uppercase tracking-wider;
+  }
+
+  .tag-green  { @apply bg-green/10 text-green border border-green/20; }
+  .tag-amber  { @apply bg-amber/10 text-amber border border-amber/20; }
+  .tag-red    { @apply bg-red/10 text-red border border-red/20; }
+  .tag-blue   { @apply bg-blue/10 text-blue border border-blue/20; }
+  .tag-grey   { @apply bg-muted/50 text-dim border border-border; }
+
+  .btn {
+    @apply inline-flex items-center gap-1.5 px-3 py-1.5 rounded-sm text-xs font-mono
+           border border-border text-text bg-surface
+           hover:bg-muted hover:border-dim hover:text-bright
+           transition-colors duration-100 cursor-pointer;
+  }
+
+  .btn-primary {
+    @apply btn border-blue/40 text-blue bg-blue/5
+           hover:bg-blue/10 hover:border-blue hover:text-bright;
+  }
+
+  .btn-danger {
+    @apply btn border-red/30 text-red/70 bg-red/5
+           hover:bg-red/10 hover:border-red hover:text-red;
+  }
+
+  .input {
+    @apply bg-ink border border-border rounded-sm px-3 py-1.5 text-xs font-mono text-text
+           placeholder-dim focus:outline-none focus:border-blue/50 focus:ring-1 focus:ring-blue/20
+           transition-colors duration-100;
+  }
+
+  .table-row-hover {
+    @apply hover:bg-muted/30 transition-colors duration-75;
+  }
+}
+
+@keyframes statusPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+@keyframes tickerScroll {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+@keyframes barSlideIn {
+  from { opacity: 0; transform: translateY(-4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.bar-slide-in {
+  animation: barSlideIn 0.15s ease-out;
+}
+
+/* Pipeline flow line animation */
+.flow-line {
+  stroke-dasharray: 4 4;
+  animation: flowDash 1.5s linear infinite;
+}
+
+@keyframes flowDash {
+  to { stroke-dashoffset: -8; }
+}
